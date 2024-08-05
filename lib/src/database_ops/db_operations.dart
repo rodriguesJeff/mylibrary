@@ -44,7 +44,7 @@ class DataBaseOperations {
         conflictAlgorithm: ConflictAlgorithm.replace,
       );
     } catch (e) {
-      log("Erro: $e");
+      log("Erro ao inserir dados: $e");
     }
   }
 
@@ -55,9 +55,25 @@ class DataBaseOperations {
 
       return map;
     } catch (e) {
-      log("Erro: $e");
+      log("Erro ao buscar dados: $e");
     }
     return [];
+  }
+
+  Future<Map<String, Object?>?> getOneData(String table, String id) async {
+    try {
+      await initOperations();
+      final List<Map<String, Object?>> map = await database.query(
+        table,
+        where: 'id = ?',
+        whereArgs: [id],
+      );
+
+      return map.first;
+    } catch (e) {
+      log("Erro ao buscar dado específico: $e");
+    }
+    return null;
   }
 
   Future<void> updateBook(BaseModel obj, String table, String id) async {
@@ -84,11 +100,8 @@ class DataBaseOperations {
     await db.execute('''
     CREATE TABLE IF NOT EXISTS ${AppStrings.userTable} (
       id TEXT PRIMARY KEY,
-      name VARCHAR(100) NOT NULL,
-      password VARCHAR(100) NOT NULL,
-      photo VARCHAR(100),
-      email VARCHAR(100) NOT NULL,
-      UNIQUE (email)
+      name VARCHAR(100),
+      photo VARCHAR(1000)
     );
     ''');
     await db.execute('''

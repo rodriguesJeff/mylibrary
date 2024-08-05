@@ -15,8 +15,8 @@ class _AuthScreenState extends State<AuthScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer<AuthStore>(
-      builder: (context, auth, child) {
-        if (auth.authStatus == AuthStatus.unLogged) {
+      builder: (context, store, child) {
+        if (store.authStatus == AuthStatus.unLogged) {
           return Scaffold(
             body: SafeArea(
               child: Center(
@@ -34,9 +34,8 @@ class _AuthScreenState extends State<AuthScreen> {
                       const SizedBox(height: 20),
                       ElevatedButton(
                         onPressed: () async {
-                          await auth.login();
-
-                          if (auth.authStatus == AuthStatus.logged) {
+                          await store.login();
+                          if (store.currentUser != null) {
                             WidgetsBinding.instance.addPostFrameCallback((_) {
                               Navigator.pushReplacement(
                                 context,

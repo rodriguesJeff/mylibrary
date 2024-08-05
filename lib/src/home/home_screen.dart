@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:my_library/src/auth/auth/auth_store.dart';
 import 'package:my_library/src/home/home_store.dart';
 import 'package:my_library/src/home/widgets/book_form.dart';
 import 'package:percent_indicator/percent_indicator.dart';
@@ -25,6 +26,8 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
+    final user = context.read<AuthStore>().currentUser;
+    final homeStore = context.watch<HomeStore>();
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -53,45 +56,51 @@ class _HomeScreenState extends State<HomeScreen> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(width * .8),
                               color: Colors.white,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Container(
-                            width: width * .25,
-                            height: 20,
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(20),
-                              color: Colors.grey.shade300,
-                            ),
-                            child: Center(
-                              child: GestureDetector(
-                                onTap: () {},
-                                child: const Text(
-                                  "Editar Perfil",
-                                  style: TextStyle(
-                                    color: Colors.grey,
-                                    fontSize: 12.0,
-                                  ),
-                                ),
+                              image: DecorationImage(
+                                image: NetworkImage(user!.photo),
+                                fit: BoxFit.fill,
                               ),
                             ),
                           ),
+                          // const SizedBox(height: 10),
+                          // Container(
+                          //   width: width * .25,
+                          //   height: 20,
+                          //   decoration: BoxDecoration(
+                          //     borderRadius: BorderRadius.circular(20),
+                          //     color: Colors.grey.shade300,
+                          //   ),
+                          //   child: Center(
+                          //     child: GestureDetector(
+                          //       onTap: () {},
+                          //       child: const Text(
+                          //         "Editar Perfil",
+                          //         style: TextStyle(
+                          //           color: Colors.grey,
+                          //           fontSize: 12.0,
+                          //         ),
+                          //       ),
+                          //     ),
+                          //   ),
+                          // ),
                         ],
                       ),
                       const SizedBox(width: 15),
-                      const Column(
+                      Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            "Nome Completo",
-                            style: TextStyle(
+                            user.name ?? "",
+                            style: const TextStyle(
                               fontSize: 16.0,
                             ),
                           ),
-                          SizedBox(height: 10),
-                          Text("Páginas Lidas"),
-                          SizedBox(height: 10),
-                          Text("Livros Lidos"),
+                          const SizedBox(height: 10),
+                          Text(
+                              "Qtd. de Páginas Lidas: ${homeStore.totalPages}"),
+                          const SizedBox(height: 10),
+                          Text("Qtd. de Livros Lidos: "
+                              "${homeStore.totalBooks}"),
                         ],
                       ),
                     ],
@@ -123,7 +132,7 @@ class _HomeScreenState extends State<HomeScreen> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
-                                Text(
+                                const Text(
                                   "Livros:",
                                   style: TextStyle(
                                     fontSize: 16.0,
@@ -131,7 +140,7 @@ class _HomeScreenState extends State<HomeScreen> {
                                 ),
                                 IconButton(
                                   onPressed: () {},
-                                  icon: Icon(
+                                  icon: const Icon(
                                     Icons.filter_alt_outlined,
                                   ),
                                 ),

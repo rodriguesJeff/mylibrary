@@ -12,6 +12,9 @@ class HomeStore extends ChangeNotifier {
   final db = DataBaseOperations();
   StatusModel? selectedStatus;
 
+  int totalPages = 0;
+  int totalBooks = 0;
+
   Future<void> initLibrary() async {
     await getStatus();
     await getBooks();
@@ -24,6 +27,9 @@ class HomeStore extends ChangeNotifier {
       for (final r in result) {
         books.add(BookModel.fromJson(r));
       }
+    }
+    for (final b in books) {
+      totalPages = totalPages += b.readPages;
     }
     notifyListeners();
   }
