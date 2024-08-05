@@ -20,12 +20,13 @@ class DataBaseOperations {
     if (!_initialized) {
       database = await openDatabase(
         join(await getDatabasesPath(), 'my_library.db'),
-        version: 5,
+        version: 1,
         onCreate: (db, version) async {
           await createTables(db);
+          await addStatusContents(db);
         },
         onUpgrade: (db, oldVersion, newVersion) async {
-          if (oldVersion < 5) {
+          if (oldVersion < 1) {
             await createTables(db);
           }
         },
@@ -80,7 +81,6 @@ class DataBaseOperations {
 
   Future<void> createTables(Database db) async {
     log("INÍCIO - CRIANDO TABELAS");
-    // await deleteDatabasew();
     await db.execute('''
     CREATE TABLE IF NOT EXISTS ${AppStrings.userTable} (
       id TEXT PRIMARY KEY,
@@ -93,7 +93,7 @@ class DataBaseOperations {
     ''');
     await db.execute('''
     CREATE TABLE IF NOT EXISTS ${AppStrings.statusTable} (
-      id TEXT PRIMARY KEY,
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
       description VARCHAR(100)
     );
     ''');
@@ -113,8 +113,27 @@ class DataBaseOperations {
       FOREIGN KEY(status_id) REFERENCES Status(id)
     );
     ''');
+
     await listTables(db);
     log("FIM - TABELAS CRIADAS");
+  }
+
+  Future<void> addStatusContents(Database db) async {
+    await db.insert(AppStrings.statusTable, {
+      'description': 'Lendo',
+    });
+
+    await db.insert(AppStrings.statusTable, {
+      'description': 'Concluído',
+    });
+
+    await db.insert(AppStrings.statusTable, {
+      'description': 'Cancelado',
+    });
+
+    await db.insert(AppStrings.statusTable, {
+      'description': 'Para Ler',
+    });
   }
 
   Future<void> listTables(Database db) async {

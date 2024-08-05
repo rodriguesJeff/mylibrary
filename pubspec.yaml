@@ -45,6 +45,7 @@ dependencies:
   percent_indicator: ^4.2.3
   uuid: ^3.0.7
   liquid_pull_to_refresh: ^3.0.1
+  dropdown_button2: ^2.3.9
 
 dev_dependencies:
   flutter_test:

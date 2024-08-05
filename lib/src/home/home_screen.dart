@@ -17,7 +17,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      await context.read<HomeStore>().getBooks();
+      await context.read<HomeStore>().initLibrary();
     });
     super.initState();
   }
@@ -98,7 +98,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   IconButton(
                     onPressed: () async {
-                      await context.read<HomeStore>().getBooks();
+                      await context.read<HomeStore>().initLibrary();
                     },
                     icon: const Icon(
                       Icons.refresh,
