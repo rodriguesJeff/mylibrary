@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:my_library/src/auth/auth/auth_store.dart';
 import 'package:my_library/src/home/home_store.dart';
 import 'package:my_library/src/home/widgets/book_form.dart';
-import 'package:percent_indicator/percent_indicator.dart';
+import 'package:my_library/src/home/widgets/list_book_widget.dart';
 import 'package:provider/provider.dart';
 
 import '../models/book_model.dart';
+import '../models/status_model.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -62,27 +63,6 @@ class _HomeScreenState extends State<HomeScreen> {
                               ),
                             ),
                           ),
-                          // const SizedBox(height: 10),
-                          // Container(
-                          //   width: width * .25,
-                          //   height: 20,
-                          //   decoration: BoxDecoration(
-                          //     borderRadius: BorderRadius.circular(20),
-                          //     color: Colors.grey.shade300,
-                          //   ),
-                          //   child: Center(
-                          //     child: GestureDetector(
-                          //       onTap: () {},
-                          //       child: const Text(
-                          //         "Editar Perfil",
-                          //         style: TextStyle(
-                          //           color: Colors.grey,
-                          //           fontSize: 12.0,
-                          //         ),
-                          //       ),
-                          //     ),
-                          //   ),
-                          // ),
                         ],
                       ),
                       const SizedBox(width: 15),
@@ -139,7 +119,56 @@ class _HomeScreenState extends State<HomeScreen> {
                                   ),
                                 ),
                                 IconButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    showDialog(
+                                        context: context,
+                                        builder: (_) {
+                                          return AlertDialog(
+                                            title: const Text("Filtro"),
+                                            content: Padding(
+                                              padding: const EdgeInsets.all(12),
+                                              child: SingleChildScrollView(
+                                                child: Column(
+                                                  children: [
+                                                    for (final StatusModel f
+                                                        in store.status)
+                                                      Row(
+                                                        children: [
+                                                          Checkbox(
+                                                            value:
+                                                                store.selectedFilter ==
+                                                                        f.id
+                                                                    ? true
+                                                                    : false,
+                                                            onChanged: (c) {
+                                                              store.setFilter(
+                                                                f.id,
+                                                              );
+                                                              Navigator.of(
+                                                                context,
+                                                              ).pop();
+                                                            },
+                                                          ),
+                                                          Text(f.description),
+                                                        ],
+                                                      ),
+                                                    ElevatedButton(
+                                                      onPressed: () {
+                                                        store.setFilter(0);
+                                                        Navigator.of(context)
+                                                            .pop();
+                                                      },
+                                                      child: const Text(
+                                                        "Limpar Filtros",
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                            ),
+                                          );
+                                        });
+                                  },
                                   icon: const Icon(
                                     Icons.filter_alt_outlined,
                                   ),
@@ -147,77 +176,13 @@ class _HomeScreenState extends State<HomeScreen> {
                               ],
                             ),
                           ),
-                          for (final BookModel book in store.books)
-                            Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 16.0),
-                              child: Hero(
-                                tag: book.id,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade200,
-                                    borderRadius: BorderRadius.circular(16.0),
-                                  ),
-                                  padding: const EdgeInsets.all(12.0),
-                                  margin: const EdgeInsets.only(bottom: 10),
-                                  child: Row(
-                                    children: [
-                                      Container(
-                                        width: width * .20,
-                                        height: width * .20,
-                                        decoration: BoxDecoration(
-                                          borderRadius:
-                                              BorderRadius.circular(12),
-                                          color: Colors.grey,
-                                        ),
-                                      ),
-                                      const SizedBox(width: 12.0),
-                                      Column(
-                                        crossAxisAlignment:
-                                            CrossAxisAlignment.start,
-                                        children: [
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 8.0),
-                                            child: Text(
-                                              book.title,
-                                              style: const TextStyle(
-                                                fontSize: 16.0,
-                                              ),
-                                            ),
-                                          ),
-                                          const SizedBox(height: 7.5),
-                                          Padding(
-                                            padding: const EdgeInsets.only(
-                                                left: 8.0),
-                                            child:
-                                                Text("Autor: ${book.author}"),
-                                          ),
-                                          const SizedBox(height: 10),
-                                          LinearPercentIndicator(
-                                            width: width * .6,
-                                            lineHeight: 20.0,
-                                            percent: ((book.readPages /
-                                                        book.totalPages) *
-                                                    100) /
-                                                100,
-                                            progressColor: Colors.blue,
-                                            // center: Center(
-                                            //   child: Text(
-                                            //     """
-                                            // ${(book.readPages / book.totalPages) * 100}%
-                                            //   """,
-                                            //     textAlign: TextAlign.center,
-                                            //   ),
-                                            // ),
-                                          )
-                                        ],
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
+                          if (store.filteredBoks.isEmpty &&
+                              store.selectedFilter == 0)
+                            for (final BookModel book in store.books)
+                              ListBookWidget(book: book)
+                          else
+                            for (final BookModel book in store.filteredBoks)
+                              ListBookWidget(book: book)
                         ],
                       );
                     } else if (store.books.isEmpty) {

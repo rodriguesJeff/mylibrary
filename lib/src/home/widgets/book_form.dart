@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:my_library/src/home/home_store.dart';
+import 'package:my_library/src/home/widgets/camera_screen.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/status_model.dart';
@@ -17,8 +20,6 @@ class _BookFormState extends State<BookForm> {
   Widget build(BuildContext context) {
     final _formKey = GlobalKey<FormState>();
 
-    // final store = context.read<HomeStore>();
-
     String startDate = '';
     String endDate = '';
 
@@ -30,7 +31,38 @@ class _BookFormState extends State<BookForm> {
           builder: (c, store, child) => SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                GestureDetector(
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (_) {
+                          return const CameraScreen();
+                        });
+                  },
+                  child: Container(
+                    width: MediaQuery.sizeOf(context).width,
+                    height: MediaQuery.sizeOf(context).height * .15,
+                    decoration: BoxDecoration(
+                      color: Colors.grey.shade300,
+                      image: DecorationImage(
+                        image: store.bookCover != null &&
+                                store.bookCover!.isNotEmpty
+                            ? FileImage(File(store.bookCover!))
+                                as ImageProvider<Object>
+                            : const AssetImage('assets/images/placeholder.png'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    child: Center(
+                      child:
+                          store.bookCover != null && store.bookCover!.isNotEmpty
+                              ? null
+                              : const Icon(Icons.photo_camera),
+                    ),
+                  ),
+                ),
                 TextFormField(
                   controller: store.titleController,
                   decoration: const InputDecoration(labelText: "Título"),
@@ -64,8 +96,9 @@ class _BookFormState extends State<BookForm> {
                   },
                   readOnly: true,
                   controller: store.startDateController,
-                  decoration:
-                      const InputDecoration(labelText: "Data de Início"),
+                  decoration: const InputDecoration(
+                    labelText: "Data de Início",
+                  ),
                   keyboardType: TextInputType.datetime,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
@@ -73,6 +106,13 @@ class _BookFormState extends State<BookForm> {
                     }
                     return null;
                   },
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    store.startDateController.clear();
+                  },
+                  child: const Text("Limpar data de Início"),
                 ),
                 TextFormField(
                   onTap: () async {
@@ -91,6 +131,13 @@ class _BookFormState extends State<BookForm> {
                       const InputDecoration(labelText: "Data de Término"),
                   keyboardType: TextInputType.datetime,
                 ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {
+                    store.endDateController.clear();
+                  },
+                  child: const Text("Limpar data de Término"),
+                ),
                 Padding(
                   padding: const EdgeInsets.only(
                     top: 12.0,
@@ -99,44 +146,42 @@ class _BookFormState extends State<BookForm> {
                   child: DropdownButtonHideUnderline(
                     child: SizedBox(
                       width: MediaQuery.sizeOf(context).width,
-                      child: Builder(builder: (context) {
-                        return DropdownButton2<StatusModel>(
-                          isExpanded: true,
-                          hint: TextFormField(
-                            controller: store.statusIdController,
-                            decoration: const InputDecoration(
-                              labelText: "Status",
-                              border: UnderlineInputBorder(),
-                            ),
-                            keyboardType: TextInputType.number,
+                      child: DropdownButton2<StatusModel>(
+                        isExpanded: true,
+                        hint: TextFormField(
+                          controller: store.statusIdController,
+                          decoration: const InputDecoration(
+                            labelText: "Status",
+                            border: UnderlineInputBorder(),
                           ),
-                          items: store.status
-                              .map((StatusModel item) =>
-                                  DropdownMenuItem<StatusModel>(
-                                    value: item,
-                                    child: Text(
-                                      item.description,
-                                      style: const TextStyle(
-                                        fontSize: 18,
-                                      ),
+                          keyboardType: TextInputType.number,
+                        ),
+                        items: store.status
+                            .map((StatusModel item) =>
+                                DropdownMenuItem<StatusModel>(
+                                  value: item,
+                                  child: Text(
+                                    item.description,
+                                    style: const TextStyle(
+                                      fontSize: 18,
                                     ),
-                                  ))
-                              .toList(),
-                          value: store.selectedStatus,
-                          onChanged: (StatusModel? value) {
-                            store.changeStatus(value!);
-                            store.statusIdController.text = value.description;
-                          },
-                          buttonStyleData: const ButtonStyleData(
-                            padding: EdgeInsets.symmetric(horizontal: 16),
-                            height: 40,
-                            width: 140,
-                          ),
-                          menuItemStyleData: const MenuItemStyleData(
-                            height: 40,
-                          ),
-                        );
-                      }),
+                                  ),
+                                ))
+                            .toList(),
+                        value: store.selectedStatus,
+                        onChanged: (StatusModel? value) {
+                          store.changeStatus(value!);
+                          store.statusIdController.text = value.description;
+                        },
+                        buttonStyleData: const ButtonStyleData(
+                          padding: EdgeInsets.symmetric(horizontal: 16),
+                          height: 40,
+                          width: 140,
+                        ),
+                        menuItemStyleData: const MenuItemStyleData(
+                          height: 40,
+                        ),
+                      ),
                     ),
                   ),
                 ),

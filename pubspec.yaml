@@ -46,6 +46,10 @@ dependencies:
   uuid: ^3.0.7
   liquid_pull_to_refresh: ^3.0.1
   dropdown_button2: ^2.3.9
+  permission_handler: ^11.3.1
+  path_provider: ^2.1.4
+  camera: ^0.11.0+1
+  gal: ^2.3.0
 
 dev_dependencies:
   flutter_test:

@@ -19,9 +19,9 @@ class AuthStore extends ChangeNotifier {
   }
 
   Future getProfile(User user) async {
-    final result = await db.getOneData(AppStrings.userTable, user.uid);
-    if (result != null) {
-      currentUser = UserModel.fromJson(result);
+    final result = await db.getData(AppStrings.userTable);
+    if (result != null && result.isNotEmpty) {
+      currentUser = UserModel.fromJson(result.first);
       authStatus = AuthStatus.logged;
       notifyListeners();
     } else {
@@ -37,7 +37,9 @@ class AuthStore extends ChangeNotifier {
     );
     await db.insertData(currentUser!, AppStrings.userTable);
     authStatus = AuthStatus.logged;
-    notifyListeners();
+    Future.delayed(const Duration(seconds: 2)).then((_) {
+      notifyListeners();
+    });
   }
 }
 

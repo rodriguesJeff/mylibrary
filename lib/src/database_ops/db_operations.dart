@@ -72,8 +72,8 @@ class DataBaseOperations {
       return map.first;
     } catch (e) {
       log("Erro ao buscar dado específico: $e");
+      return null;
     }
-    return null;
   }
 
   Future<void> updateBook(BaseModel obj, String table, String id) async {
@@ -122,6 +122,7 @@ class DataBaseOperations {
       end_date DATE,
       user_id TEXT,
       status_id TEXT,
+      cover TEXT,
       FOREIGN KEY(user_id) REFERENCES User(id),
       FOREIGN KEY(status_id) REFERENCES Status(id)
     );

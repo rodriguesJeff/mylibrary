@@ -7,6 +7,7 @@ class BookModel implements BaseModel {
   final String startDate;
   final String endDate;
   final String statusId;
+  final String cover;
   final String userId;
   final int readPages;
   final int totalPages;
@@ -18,6 +19,7 @@ class BookModel implements BaseModel {
     required this.startDate,
     required this.endDate,
     required this.statusId,
+    required this.cover,
     required this.userId,
     required this.readPages,
     required this.totalPages,
@@ -25,7 +27,9 @@ class BookModel implements BaseModel {
 
   @override
   String toString() {
-    return 'BookModel{id: $id, title: $title, author: $author, startDate: $startDate, endDate: $endDate, statusId: $statusId, userId: $userId, readPages: $readPages, totalPages: $totalPages}';
+    return 'BookModel{id: $id, title: $title, author: $author, startDate: '
+        '$startDate, endDate: $endDate, statusId: $statusId, cover: $cover, '
+        'userId: $userId, readPages: $readPages, totalPages: $totalPages}';
   }
 
   @override
@@ -37,6 +41,7 @@ class BookModel implements BaseModel {
       startDate: json["start_date"],
       endDate: json["end_date"],
       statusId: json["status_id"],
+      cover: json["cover"],
       userId: json["user_id"],
       readPages: json["read_pages"],
       totalPages: json["total_pages"],
@@ -53,6 +58,7 @@ class BookModel implements BaseModel {
       "end_date": endDate,
       "user_id": userId,
       "status_id": statusId,
+      "cover": cover,
       "read_pages": readPages,
       "total_pages": totalPages
     };
