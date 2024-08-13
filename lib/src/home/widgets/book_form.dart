@@ -51,7 +51,7 @@ class _BookFormState extends State<BookForm> {
                                 store.bookCover!.isNotEmpty
                             ? FileImage(File(store.bookCover!))
                                 as ImageProvider<Object>
-                            : const AssetImage('assets/images/placeholder.png'),
+                            : const AssetImage('assets/cover.jpeg'),
                         fit: BoxFit.cover,
                       ),
                     ),
@@ -121,9 +121,9 @@ class _BookFormState extends State<BookForm> {
                       firstDate: DateTime(2000),
                       lastDate: DateTime.now(),
                     );
-                    endDate = '${date!.year}-${date!.month}-${date!.day}';
+                    endDate = '${date!.year}-${date.month}-${date.day}';
                     store.endDateController.text =
-                        '${date!.day}/${date!.month}/${date!.year}';
+                        '${date.day}/${date.month}/${date.year}';
                   },
                   readOnly: true,
                   controller: store.endDateController,

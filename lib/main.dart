@@ -20,6 +20,9 @@ void main() async {
         ChangeNotifierProvider(create: (context) => HomeStore()),
       ],
       child: MaterialApp(
+        theme: ThemeData(
+          primarySwatch: Colors.cyan,
+        ),
         home: const AuthScreen(),
       ),
     ),

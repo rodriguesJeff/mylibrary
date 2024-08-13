@@ -10,6 +10,7 @@ class HomeStore extends ChangeNotifier {
   List<BookModel> books = [];
   List<BookModel> filteredBoks = [];
   List<StatusModel> status = [];
+  BookModel? selectedBook;
   final db = DataBaseOperations();
   StatusModel? selectedStatus;
   String? bookCover;
@@ -47,6 +48,48 @@ class HomeStore extends ChangeNotifier {
       }
     }
     notifyListeners();
+  }
+
+  Future updateBookInfos() async {
+    bookStatus = BookStatus.loading;
+    notifyListeners();
+    final book = BookModel(
+      id: selectedBook!.id,
+      title: titleController.text.isNotEmpty
+          ? titleController.text
+          : selectedBook!.title,
+      author: authorController.text.isNotEmpty
+          ? authorController.text
+          : selectedBook!.author,
+      startDate: startDateController.text.isNotEmpty
+          ? startDateController.text
+          : selectedBook!.startDate,
+      endDate: endDateController.text.isNotEmpty
+          ? endDateController.text
+          : selectedBook!.endDate,
+      statusId: statusIdController.text.isNotEmpty
+          ? statusIdController.text
+          : selectedBook!.statusId,
+      cover: bookCover ?? "'assets/cover.jpeg'",
+      userId: selectedBook!.userId,
+      readPages: readPagesController.text.isNotEmpty
+          ? int.parse(readPagesController.text)
+          : selectedBook!.readPages,
+      totalPages: totalPagesController.text.isNotEmpty
+          ? int.parse(totalPagesController.text)
+          : selectedBook!.totalPages,
+    );
+    await db.updateData(book, AppStrings.bookTable, selectedBook!.id);
+    final editted = await db.getOneData(AppStrings.bookTable, selectedBook!.id);
+    selectedBook = null;
+    selectedBook = BookModel.fromJson(editted!);
+    initBook();
+    bookStatus = BookStatus.fetched;
+    notifyListeners();
+  }
+
+  void selectBook(BookModel b) {
+    selectedBook = b;
   }
 
   void changeStatus(StatusModel value) {
@@ -103,7 +146,7 @@ class HomeStore extends ChangeNotifier {
         startDate: startDateController.text,
         endDate: endDateController.text,
         statusId: statusIdController.text,
-        cover: bookCover ?? "",
+        cover: bookCover ?? "'assets/cover.jpeg'",
         userId: userIdController.text,
         readPages: int.parse(readPagesController.text),
         totalPages: int.tryParse(totalPagesController.text) ?? 0,
@@ -112,6 +155,12 @@ class HomeStore extends ChangeNotifier {
     );
     await getBooks();
     clearForm();
+  }
+
+  Future deleteBook(String id) async {
+    final bookCrud = DataBaseOperations();
+    await bookCrud.deleteBook(id, AppStrings.bookTable);
+    notifyListeners();
   }
 
   final titleController = TextEditingController();
@@ -129,11 +178,25 @@ class HomeStore extends ChangeNotifier {
     startDateController.clear();
     endDateController.clear();
     statusIdController.clear();
-    userIdController.clear();
     readPagesController.clear();
     totalPagesController.clear();
 
     bookCover = "";
+  }
+
+  initBook() {
+    if (selectedBook != null) {
+      clearForm();
+      titleController.text = selectedBook!.title;
+      authorController.text = selectedBook!.author;
+      statusIdController.text = selectedBook!.statusId;
+      totalPagesController.text = selectedBook!.totalPages.toString();
+      readPagesController.text = selectedBook!.readPages.toString();
+      startDateController.text = selectedBook!.startDate;
+      endDateController.text = selectedBook!.endDate;
+      bookCover = selectedBook!.cover;
+    }
+    bookStatus = BookStatus.fetched;
   }
 }
 

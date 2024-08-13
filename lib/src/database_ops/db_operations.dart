@@ -76,7 +76,7 @@ class DataBaseOperations {
     }
   }
 
-  Future<void> updateBook(BaseModel obj, String table, String id) async {
+  Future<void> updateData(BaseModel obj, String table, String id) async {
     await initOperations();
     await database.update(
       table,
@@ -86,7 +86,7 @@ class DataBaseOperations {
     );
   }
 
-  Future<void> deleteBook(int id, String table) async {
+  Future<void> deleteBook(String id, String table) async {
     await initOperations();
     await database.delete(
       table,

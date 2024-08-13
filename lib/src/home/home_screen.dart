@@ -214,6 +214,8 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        heroTag: UniqueKey(),
+        key: UniqueKey(),
         onPressed: () {
           showDialog(
             context: context,
