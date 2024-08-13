@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:animated_button/animated_button.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:my_library/src/home/home_store.dart';
@@ -24,7 +25,19 @@ class _BookFormState extends State<BookForm> {
     String endDate = '';
 
     return AlertDialog(
-      title: const Text("Adicionar novo livro:"),
+      title: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          const Text("Adicionar novo livro:"),
+          IconButton(
+            onPressed: () => Navigator.pop(context),
+            icon: const Icon(
+              Icons.close,
+              color: Colors.black,
+            ),
+          ),
+        ],
+      ),
       content: Form(
         key: _formKey,
         child: Consumer<HomeStore>(
@@ -108,11 +121,22 @@ class _BookFormState extends State<BookForm> {
                   },
                 ),
                 const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    store.startDateController.clear();
-                  },
-                  child: const Text("Limpar data de Início"),
+                Center(
+                  child: AnimatedButton(
+                    shadowDegree: ShadowDegree.dark,
+                    width: MediaQuery.sizeOf(context).width * .6,
+                    onPressed: () {
+                      store.startDateController.clear();
+                    },
+                    color: Colors.redAccent,
+                    child: const Text(
+                      "Limpar data de Início",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
                 ),
                 TextFormField(
                   onTap: () async {
@@ -132,11 +156,22 @@ class _BookFormState extends State<BookForm> {
                   keyboardType: TextInputType.datetime,
                 ),
                 const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {
-                    store.endDateController.clear();
-                  },
-                  child: const Text("Limpar data de Término"),
+                Center(
+                  child: AnimatedButton(
+                    shadowDegree: ShadowDegree.dark,
+                    width: MediaQuery.sizeOf(context).width * .6,
+                    onPressed: () {
+                      store.endDateController.clear();
+                    },
+                    color: Colors.redAccent,
+                    child: const Text(
+                      "Limpar data de Término",
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
                 ),
                 Padding(
                   padding: const EdgeInsets.only(
@@ -203,14 +238,24 @@ class _BookFormState extends State<BookForm> {
                   },
                 ),
                 const SizedBox(height: 20),
-                ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState?.validate() ?? false) {
-                      store.addNew();
-                      Navigator.of(context).pop();
-                    }
-                  },
-                  child: const Text("Salvar"),
+                Center(
+                  child: AnimatedButton(
+                    shadowDegree: ShadowDegree.dark,
+                    width: MediaQuery.sizeOf(context).width * .6,
+                    onPressed: () {
+                      if (_formKey.currentState?.validate() ?? false) {
+                        store.addNew();
+                        Navigator.of(context).pop();
+                      }
+                    },
+                    child: const Text(
+                      "Salvar",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
                 ),
               ],
             ),

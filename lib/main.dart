@@ -6,6 +6,7 @@ import 'package:provider/provider.dart';
 import 'firebase_options.dart';
 import 'src/auth/auth/auth_screen.dart';
 import 'src/auth/auth/auth_store.dart';
+import 'src/utils/theme.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -20,9 +21,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => HomeStore()),
       ],
       child: MaterialApp(
-        theme: ThemeData(
-          primarySwatch: Colors.cyan,
-        ),
+        theme: readingAppTheme,
         home: const AuthScreen(),
       ),
     ),
