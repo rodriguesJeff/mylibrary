@@ -1,3 +1,4 @@
+import 'package:animated_button/animated_button.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:my_library/src/home/home_store.dart';
@@ -87,14 +88,45 @@ class EditInfoWidget extends StatelessWidget {
                     store.startDateController.text =
                         '${date.day}/${date.month}/${date.year}';
                   } else if (info.toLowerCase().contains("fim")) {
-                    final date = await showDatePicker(
-                      context: context,
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime.now(),
-                    );
-                    endDate = '${date!.year}-${date.month}-${date.day}';
-                    store.endDateController.text =
-                        '${date.day}/${date.month}/${date.year}';
+                    if (store.statusIdController.text
+                        .toLowerCase()
+                        .contains("concluído")) {
+                      showDialog(
+                        context: context,
+                        builder: (_) => AlertDialog(
+                          title: const Text("Atenção!"),
+                          content: const Text(
+                            "Para editar a data de fim da leitura, "
+                            "é necessário que o status seja diferente de "
+                            "Concluído!",
+                          ),
+                          actions: [
+                            AnimatedButton(
+                              onPressed: () {
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              },
+                              child: const Text(
+                                "OK!",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 18,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      );
+                    } else {
+                      final date = await showDatePicker(
+                        context: context,
+                        firstDate: DateTime(2000),
+                        lastDate: DateTime.now(),
+                      );
+                      endDate = '${date!.year}-${date.month}-${date.day}';
+                      store.endDateController.text =
+                          '${date.day}/${date.month}/${date.year}';
+                    }
                   }
                 },
                 readOnly: info.toLowerCase().contains("data"),
@@ -112,14 +144,33 @@ class EditInfoWidget extends StatelessWidget {
       actions: [
         TextButton(
           onPressed: Navigator.of(context).pop,
-          child: const Text("Cancelar"),
+          child: const Text(
+            "Cancelar",
+            style: TextStyle(
+              color: Colors.redAccent,
+            ),
+          ),
         ),
-        ElevatedButton(
+        AnimatedButton(
           onPressed: () async {
+            if (store.statusIdController.text
+                .toLowerCase()
+                .contains("concluído")) {
+              store.readPagesController.text = store.totalPagesController.text;
+              final date = DateTime.now();
+              store.endDateController.text =
+                  '${date.day}/${date.month}/${date.year}';
+            }
             await store.updateBookInfos();
             Navigator.of(context).pop();
           },
-          child: const Text("Salvar"),
+          child: const Text(
+            "Salvar",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 18,
+            ),
+          ),
         ),
       ],
     );

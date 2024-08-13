@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:my_library/src/book_details/book_details.dart';
 import 'package:my_library/src/models/book_model.dart';
-import 'package:percent_indicator/percent_indicator.dart';
+import 'package:my_library/src/widgets/book_progress_indicator.dart';
 import 'package:provider/provider.dart';
 
 import '../home_store.dart';
@@ -54,33 +54,39 @@ class ListBookWidget extends StatelessWidget {
                 ),
               ),
               const SizedBox(width: 12.0),
-              Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Text(
-                      book.title,
-                      style: const TextStyle(
-                        fontSize: 16.0,
-                        fontWeight: FontWeight.bold,
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(
+                        book.title,
+                        maxLines: 10,
+                        overflow: TextOverflow.ellipsis,
+                        style: const TextStyle(
+                          fontSize: 16.0,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(height: 7.5),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 8.0),
-                    child: Text("Autor: ${book.author}"),
-                  ),
-                  const SizedBox(height: 10),
-                  LinearPercentIndicator(
-                    width: width * .6,
-                    lineHeight: 20.0,
-                    percent: ((book.readPages / book.totalPages) * 100) / 100,
-                    progressColor: Colors.blue,
-                  )
-                ],
+                    const SizedBox(height: 7.5),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Text(
+                        "Autor: ${book.author}",
+                        maxLines: 10,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                    const SizedBox(height: 10),
+                    BookProgressIndicator(
+                      readPages: book.readPages,
+                      totalPages: book.totalPages,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),

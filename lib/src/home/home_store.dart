@@ -27,22 +27,24 @@ class HomeStore extends ChangeNotifier {
 
   Future<void> getBooks() async {
     books.clear();
+    totalPages = 0;
     final result = await db.getData(AppStrings.bookTable);
-    if (result != null) {
+    if (result.isNotEmpty) {
       for (final r in result) {
         books.add(BookModel.fromJson(r));
       }
+      for (final b in books) {
+        totalPages = totalPages += b.readPages;
+      }
     }
-    for (final b in books) {
-      totalPages = totalPages += b.readPages;
-    }
+
     notifyListeners();
   }
 
   Future<void> getStatus() async {
     status.clear();
     final result = await db.getData(AppStrings.statusTable);
-    if (result != null) {
+    if (result.isNotEmpty) {
       for (final r in result) {
         status.add(StatusModel.fromJson(r));
       }
@@ -106,7 +108,7 @@ class HomeStore extends ChangeNotifier {
     filteredBoks.clear();
     if (filter == 1) {
       for (final b in books) {
-        if (b.statusId == "Lendo") {
+        if (b.statusId.toLowerCase().contains("lendo")) {
           filteredBoks.add(b);
         }
       }
@@ -114,19 +116,19 @@ class HomeStore extends ChangeNotifier {
       notifyListeners();
     } else if (filter == 2) {
       filteredBoks.addAll(
-        books.where((e) => e.statusId == "Para Ler"),
+        books.where((e) => e.statusId.toLowerCase().contains("concluído")),
       );
       selectedFilter = 2;
       notifyListeners();
     } else if (filter == 3) {
       filteredBoks.addAll(
-        books.where((e) => e.statusId == "Concluído"),
+        books.where((e) => e.statusId.toLowerCase().contains("cancelado")),
       );
       selectedFilter = 3;
       notifyListeners();
     } else if (filter == 4) {
       filteredBoks.addAll(
-        books.where((e) => e.statusId == "Cancelado"),
+        books.where((e) => e.statusId.toLowerCase().contains("para ler")),
       );
       selectedFilter = 4;
       notifyListeners();

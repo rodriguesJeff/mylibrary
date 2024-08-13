@@ -5,7 +5,7 @@ import 'package:lottie/lottie.dart';
 import 'package:my_library/src/book_details/widgets/book_content_widget.dart';
 import 'package:my_library/src/home/home_store.dart';
 import 'package:my_library/src/models/book_model.dart';
-import 'package:percent_indicator/percent_indicator.dart';
+import 'package:my_library/src/widgets/book_progress_indicator.dart';
 import 'package:provider/provider.dart';
 
 class BookDetails extends StatefulWidget {
@@ -58,7 +58,7 @@ class _BookDetailsState extends State<BookDetails> {
                           },
                           icon: const Icon(
                             Icons.arrow_back,
-                            color: Colors.white,
+                            // color: Colors.white,
                           ),
                         ),
                         IconButton(
@@ -94,7 +94,7 @@ class _BookDetailsState extends State<BookDetails> {
                           },
                           icon: const Icon(
                             Icons.delete,
-                            color: Colors.white,
+                            // color: Colors.white,
                           ),
                         ),
                       ],
@@ -134,14 +134,10 @@ class _BookDetailsState extends State<BookDetails> {
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                  child: LinearPercentIndicator(
-                    width: width * .9,
-                    lineHeight: 20.0,
-                    percent: ((store.selectedBook!.readPages /
-                                store.selectedBook!.totalPages) *
-                            100) /
-                        100,
-                    progressColor: Colors.blue,
+                  child: BookProgressIndicator(
+                    readPages: store.selectedBook!.readPages,
+                    totalPages: store.selectedBook!.totalPages,
+                    comeFromHome: false,
                   ),
                 ),
                 const SizedBox(height: 16.0),

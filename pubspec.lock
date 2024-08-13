@@ -222,6 +222,14 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_confetti:
+    dependency: "direct main"
+    description:
+      name: flutter_confetti
+      sha256: "7a0f586a0295b1dad6be364a82c59b8579e1cc8af99b0cba0461b6fabd60ff78"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0"
   flutter_lints:
     dependency: "direct dev"
     description:
@@ -472,6 +480,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "4.2.3"
+  percentages_with_animation:
+    dependency: "direct main"
+    description:
+      name: percentages_with_animation
+      sha256: "8a73d97996a14d1d8f3899097c49567fcb90a78253c8b7115a1b402d3a29e73c"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.0"
   permission_handler:
     dependency: "direct main"
     description:

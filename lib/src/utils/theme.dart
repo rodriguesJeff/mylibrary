@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 final ThemeData readingAppTheme = ThemeData(
   primaryColor: const Color(0xFF0057A3),
   colorScheme: ColorScheme.fromSwatch().copyWith(
-    secondary: const Color(0xFFDAA520),
+    secondary: const Color(0xFF4FC3F7),
   ),
   scaffoldBackgroundColor: const Color(0xFFF5F5F5),
   textTheme: const TextTheme(
@@ -31,12 +31,12 @@ final ThemeData readingAppTheme = ThemeData(
       fontWeight: FontWeight.bold,
     ),
   ),
-  iconTheme: const IconThemeData(
-    color: Color(0xFFFFC107),
+  iconTheme: IconThemeData(
+    color: Colors.grey.shade400,
   ),
   inputDecorationTheme: const InputDecorationTheme(
     focusedBorder: UnderlineInputBorder(
-      borderSide: BorderSide(color: Color(0xFFFFC107)),
+      borderSide: BorderSide(color: Color(0xFF4FC3F7)),
     ),
     enabledBorder: UnderlineInputBorder(
       borderSide: BorderSide(color: Color(0xFF0057A3)),

@@ -25,16 +25,22 @@ class BookContentWidget extends StatelessWidget {
           children: [
             Text(
               title,
+              maxLines: 10,
+              overflow: TextOverflow.ellipsis,
               style: const TextStyle(fontSize: 16.0),
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  content,
-                  style: const TextStyle(
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Text(
+                    content,
+                    maxLines: 10,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 IconButton(

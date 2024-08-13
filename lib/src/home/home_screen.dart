@@ -1,11 +1,10 @@
+import 'package:animated_button/animated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:my_library/src/auth/auth/auth_store.dart';
 import 'package:my_library/src/home/home_store.dart';
 import 'package:my_library/src/home/widgets/book_form.dart';
 import 'package:my_library/src/home/widgets/list_book_widget.dart';
-import 'package:my_library/src/widgets/pushable_button_widget.dart';
 import 'package:provider/provider.dart';
-import 'package:pushable_button/pushable_button.dart';
 
 import '../models/book_model.dart';
 import '../models/status_model.dart';
@@ -39,7 +38,7 @@ class _HomeScreenState extends State<HomeScreen> {
               width: width,
               padding: const EdgeInsets.all(16),
               decoration: BoxDecoration(
-                color: Colors.blue.shade200,
+                color: Theme.of(context).primaryColorLight,
                 borderRadius: const BorderRadius.only(
                   bottomLeft: Radius.circular(16.0),
                   bottomRight: Radius.circular(16.0),
@@ -117,7 +116,8 @@ class _HomeScreenState extends State<HomeScreen> {
                                 const Text(
                                   "Livros:",
                                   style: TextStyle(
-                                    fontSize: 16.0,
+                                    fontSize: 22.0,
+                                    fontWeight: FontWeight.bold,
                                   ),
                                 ),
                                 IconButton(
@@ -154,7 +154,13 @@ class _HomeScreenState extends State<HomeScreen> {
                                                           Text(f.description),
                                                         ],
                                                       ),
-                                                    ElevatedButton(
+                                                    const SizedBox(height: 15),
+                                                    AnimatedButton(
+                                                      color: Theme.of(context)
+                                                          .colorScheme
+                                                          .secondary,
+                                                      shadowDegree:
+                                                          ShadowDegree.dark,
                                                       onPressed: () {
                                                         store.setFilter(0);
                                                         Navigator.of(context)
@@ -162,6 +168,10 @@ class _HomeScreenState extends State<HomeScreen> {
                                                       },
                                                       child: const Text(
                                                         "Limpar Filtros",
+                                                        style: TextStyle(
+                                                          color: Colors.white,
+                                                          fontSize: 18,
+                                                        ),
                                                       ),
                                                     ),
                                                   ],
@@ -218,9 +228,14 @@ class _HomeScreenState extends State<HomeScreen> {
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 10.0),
-        child: PushableButtonWidget(
-          text: "Adicionar novo livro",
-          function: () {
+        child: AnimatedButton(
+          width: width * .8,
+          color: Theme.of(context).colorScheme.primary,
+          child: const Text(
+            "Adicionar novo livro",
+            style: TextStyle(color: Colors.white, fontSize: 18),
+          ),
+          onPressed: () {
             showDialog(
               context: context,
               builder: (c) => const BookForm(),
