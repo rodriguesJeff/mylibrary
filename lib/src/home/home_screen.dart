@@ -3,7 +3,9 @@ import 'package:my_library/src/auth/auth/auth_store.dart';
 import 'package:my_library/src/home/home_store.dart';
 import 'package:my_library/src/home/widgets/book_form.dart';
 import 'package:my_library/src/home/widgets/list_book_widget.dart';
+import 'package:my_library/src/widgets/pushable_button_widget.dart';
 import 'package:provider/provider.dart';
+import 'package:pushable_button/pushable_button.dart';
 
 import '../models/book_model.dart';
 import '../models/status_model.dart';
@@ -213,17 +215,18 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        heroTag: UniqueKey(),
-        key: UniqueKey(),
-        onPressed: () {
-          showDialog(
-            context: context,
-            builder: (c) => const BookForm(),
-          );
-        },
-        backgroundColor: Colors.blue.shade100,
-        child: Icon(Icons.add),
+      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 10.0),
+        child: PushableButtonWidget(
+          text: "Adicionar novo livro",
+          function: () {
+            showDialog(
+              context: context,
+              builder: (c) => const BookForm(),
+            );
+          },
+        ),
       ),
     );
   }
