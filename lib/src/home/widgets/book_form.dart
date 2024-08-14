@@ -240,6 +240,7 @@ class _BookFormState extends State<BookForm> {
                 const SizedBox(height: 20),
                 Center(
                   child: AnimatedButton(
+                    color: Colors.green,
                     shadowDegree: ShadowDegree.dark,
                     width: MediaQuery.sizeOf(context).width * .6,
                     onPressed: () {

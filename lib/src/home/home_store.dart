@@ -1,7 +1,9 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:my_library/src/database_ops/db_operations.dart';
 import 'package:my_library/src/models/book_model.dart';
 import 'package:my_library/src/models/status_model.dart';
+import 'package:my_library/src/models/user_model.dart';
 import 'package:my_library/src/utils/app_strings.dart';
 import 'package:uuid/uuid.dart';
 
@@ -15,6 +17,8 @@ class HomeStore extends ChangeNotifier {
   StatusModel? selectedStatus;
   String? bookCover;
   int selectedFilter = 0;
+  UserModel? currentUser;
+  String? photo;
 
   int totalPages = 0;
   int totalBooks = 0;
@@ -22,7 +26,29 @@ class HomeStore extends ChangeNotifier {
   Future<void> initLibrary() async {
     await getStatus();
     await getBooks();
+    await getCurrentUser();
     clearForm();
+  }
+
+  Future<void> getCurrentUser() async {
+    final result = await db.getData(AppStrings.userTable);
+    currentUser = UserModel.fromJson(result.first);
+    notifyListeners();
+  }
+
+  Future updateProfile() async {
+    final credential = FirebaseAuth.instance.currentUser!;
+    await credential.reload();
+    await credential.updateDisplayName(nameController.text);
+    await db.updateData(
+      UserModel(
+        id: currentUser!.id,
+        name: nameController.text,
+        photo: photo ?? "",
+      ),
+      AppStrings.userTable,
+      currentUser!.id,
+    );
   }
 
   Future<void> getBooks() async {
@@ -200,6 +226,8 @@ class HomeStore extends ChangeNotifier {
     }
     bookStatus = BookStatus.fetched;
   }
+
+  final nameController = TextEditingController();
 }
 
 enum BookStatus { loading, fetched, error }

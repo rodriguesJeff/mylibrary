@@ -1,4 +1,5 @@
 import 'package:animated_button/animated_button.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:my_library/src/auth/auth/auth_service.dart';
 import 'package:my_library/src/auth/auth/auth_store.dart';
@@ -25,6 +26,21 @@ class _AuthScreenState extends State<AuthScreen> {
   final emailFocus = FocusNode();
   final passwordFocus = FocusNode();
   final retypePasswordFocus = FocusNode();
+
+  @override
+  void initState() {
+    if (FirebaseAuth.instance.currentUser != null) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(
+            builder: (_) => const HomeScreen(),
+          ),
+        );
+      });
+    }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

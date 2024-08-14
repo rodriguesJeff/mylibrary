@@ -56,8 +56,9 @@ class _BookDetailsState extends State<BookDetails> {
                           onPressed: () {
                             Navigator.pop(context);
                           },
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.arrow_back,
+                            color: Theme.of(context).primaryColor,
                             // color: Colors.white,
                           ),
                         ),
@@ -92,8 +93,9 @@ class _BookDetailsState extends State<BookDetails> {
                                   );
                                 });
                           },
-                          icon: const Icon(
+                          icon: Icon(
                             Icons.delete,
+                            color: Theme.of(context).primaryColor,
                             // color: Colors.white,
                           ),
                         ),

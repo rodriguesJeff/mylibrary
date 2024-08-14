@@ -1,9 +1,12 @@
 import 'package:animated_button/animated_button.dart';
 import 'package:flutter/material.dart';
+import 'package:my_library/src/auth/auth/auth_screen.dart';
 import 'package:my_library/src/auth/auth/auth_store.dart';
 import 'package:my_library/src/home/home_store.dart';
 import 'package:my_library/src/home/widgets/book_form.dart';
+import 'package:my_library/src/home/widgets/camera_screen.dart';
 import 'package:my_library/src/home/widgets/list_book_widget.dart';
+import 'package:one_context/one_context.dart';
 import 'package:provider/provider.dart';
 
 import '../models/book_model.dart';
@@ -28,8 +31,96 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.sizeOf(context).width;
-    final user = context.read<AuthStore>().currentUser;
     final homeStore = context.watch<HomeStore>();
+    if (homeStore.currentUser != null && homeStore.currentUser!.name.isEmpty) {
+      while (OneContext().hasDialogVisible) {
+        OneContext().popDialog();
+      }
+      OneContext().showDialog(builder: (_) {
+        return AlertDialog(
+          title: const Text("Vamos nos conhecer melhor!"),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                GestureDetector(
+                  onTap: () {
+                    showDialog(
+                        context: context,
+                        builder: (_) {
+                          return const CameraScreen();
+                        });
+                  },
+                  child: Container(
+                    width: 150,
+                    height: 150,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(150),
+                      color: Colors.grey.shade300,
+                      image: DecorationImage(
+                        image: homeStore.currentUser!.photo.isNotEmpty
+                            ? AssetImage(homeStore.currentUser!.photo)
+                                as ImageProvider<Object>
+                            : const AssetImage('assets/profile.jpg'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    child: Center(
+                      child: homeStore.currentUser?.photo != null &&
+                              homeStore.currentUser!.photo.isNotEmpty
+                          ? null
+                          : const Icon(Icons.photo_camera),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: homeStore.nameController,
+                  decoration: InputDecoration(
+                    labelText: "Nome",
+                    labelStyle: TextStyle(
+                      color: Colors.grey.shade800,
+                      fontSize: 16.0,
+                    ),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    disabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                    errorBorder: OutlineInputBorder(
+                      borderSide: const BorderSide(color: Colors.red),
+                      borderRadius: BorderRadius.circular(16.0),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                AnimatedButton(
+                  color: Colors.green,
+                  onPressed: () {
+                    homeStore.updateProfile();
+                    OneContext().popDialog();
+                    homeStore.initLibrary();
+                  },
+                  child: const Text(
+                    "Salvar!",
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      });
+    }
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -59,7 +150,11 @@ class _HomeScreenState extends State<HomeScreen> {
                               borderRadius: BorderRadius.circular(width * .8),
                               color: Colors.white,
                               image: DecorationImage(
-                                image: NetworkImage(user!.photo),
+                                image: homeStore.currentUser?.photo != null
+                                    ? NetworkImage(homeStore.currentUser!.photo)
+                                        as ImageProvider
+                                    : const AssetImage("assets/profile.jpg")
+                                        as ImageProvider,
                                 fit: BoxFit.fill,
                               ),
                             ),
@@ -71,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            user.name ?? "",
+                            homeStore.currentUser?.name ?? "",
                             style: const TextStyle(
                               fontSize: 16.0,
                             ),
@@ -86,13 +181,33 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ],
                   ),
-                  IconButton(
-                    onPressed: () async {
-                      await context.read<HomeStore>().initLibrary();
-                    },
-                    icon: const Icon(
-                      Icons.refresh,
-                    ),
+                  Column(
+                    children: [
+                      IconButton(
+                        onPressed: () async {
+                          context.read<AuthStore>().logout().then((_) async {
+                            Navigator.of(context).pushReplacement(
+                              MaterialPageRoute(
+                                builder: (_) => const AuthScreen(),
+                              ),
+                            );
+                          });
+                        },
+                        icon: Icon(
+                          Icons.exit_to_app,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                      IconButton(
+                        onPressed: () async {
+                          await context.read<HomeStore>().initLibrary();
+                        },
+                        icon: Icon(
+                          Icons.refresh,
+                          color: Theme.of(context).primaryColor,
+                        ),
+                      ),
+                    ],
                   ),
                 ],
               ),
