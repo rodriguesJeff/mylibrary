@@ -55,6 +55,8 @@ dependencies:
   animated_button: ^0.2.0
   percentages_with_animation: ^1.0.0
   flutter_confetti: ^0.3.0
+  one_context: ^4.0.0
+  flutter_svg: ^2.0.10+1
 
 dev_dependencies:
   flutter_test:
@@ -85,6 +87,7 @@ flutter:
     - assets/cover.jpeg
     - assets/loading.json
     - assets/login.json
+    - assets/library.jpg
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
