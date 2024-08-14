@@ -6,6 +6,7 @@ import 'package:my_library/src/book_details/widgets/book_content_widget.dart';
 import 'package:my_library/src/home/home_store.dart';
 import 'package:my_library/src/models/book_model.dart';
 import 'package:my_library/src/widgets/book_progress_indicator.dart';
+import 'package:one_context/one_context.dart';
 import 'package:provider/provider.dart';
 
 class BookDetails extends StatefulWidget {
@@ -54,7 +55,7 @@ class _BookDetailsState extends State<BookDetails> {
                       children: [
                         IconButton(
                           onPressed: () {
-                            Navigator.pop(context);
+                            OneContext().popDialog();
                           },
                           icon: Icon(
                             Icons.arrow_back,
@@ -79,14 +80,14 @@ class _BookDetailsState extends State<BookDetails> {
                                         onPressed: () async {
                                           await store
                                               .deleteBook(widget.book.id);
-                                          Navigator.of(context).pop();
-                                          Navigator.of(context).pop();
+                                          OneContext().pop();
+                                          OneContext().pop();
                                         },
                                         child: const Text("Sim, deletar!"),
                                       ),
                                       ElevatedButton(
                                         onPressed: () =>
-                                            Navigator.of(context).pop(),
+                                            OneContext().popDialog(),
                                         child: const Text("Cancelar"),
                                       ),
                                     ],

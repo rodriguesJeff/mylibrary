@@ -2,6 +2,7 @@ import 'package:animated_button/animated_button.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
 import 'package:my_library/src/home/home_store.dart';
+import 'package:one_context/one_context.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/status_model.dart';
@@ -103,8 +104,8 @@ class EditInfoWidget extends StatelessWidget {
                           actions: [
                             AnimatedButton(
                               onPressed: () {
-                                Navigator.pop(context);
-                                Navigator.pop(context);
+                                OneContext().popDialog();
+                                OneContext().popDialog();
                               },
                               child: const Text(
                                 "OK!",
@@ -143,7 +144,7 @@ class EditInfoWidget extends StatelessWidget {
       ),
       actions: [
         TextButton(
-          onPressed: Navigator.of(context).pop,
+          onPressed: OneContext().popDialog(),
           child: const Text(
             "Cancelar",
             style: TextStyle(
@@ -162,7 +163,7 @@ class EditInfoWidget extends StatelessWidget {
                   '${date.day}/${date.month}/${date.year}';
             }
             await store.updateBookInfos();
-            Navigator.of(context).pop();
+            OneContext().pop();
           },
           child: const Text(
             "Salvar",

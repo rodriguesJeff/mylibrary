@@ -31,8 +31,7 @@ class _AuthScreenState extends State<AuthScreen> {
   void initState() {
     if (FirebaseAuth.instance.currentUser != null) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        Navigator.pushReplacement(
-          context,
+        OneContext().pushReplacement(
           MaterialPageRoute(
             builder: (_) => const HomeScreen(),
           ),
@@ -319,6 +318,10 @@ class _AuthScreenState extends State<AuthScreen> {
                                       store.createUser().then((_) async {
                                         switch (store.creationAccountStatus!) {
                                           case CreationAccountStatus.created:
+                                            store.emailController.clear();
+                                            store.passwordController.clear();
+                                            store.retypePasswordController
+                                                .clear();
                                             OneContext().pushReplacement(
                                               MaterialPageRoute(
                                                 builder: (_) =>
@@ -406,6 +409,10 @@ class _AuthScreenState extends State<AuthScreen> {
                                       store.login().then((_) async {
                                         switch (store.loginStatus!) {
                                           case LoginStatus.success:
+                                            store.emailController.clear();
+                                            store.passwordController.clear();
+                                            store.retypePasswordController
+                                                .clear();
                                             OneContext().pushReplacement(
                                               MaterialPageRoute(
                                                 builder: (_) =>

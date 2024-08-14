@@ -39,7 +39,13 @@ class HomeStore extends ChangeNotifier {
   Future updateProfile() async {
     final credential = FirebaseAuth.instance.currentUser!;
     await credential.reload();
-    await credential.updateDisplayName(nameController.text);
+    if (nameController.text.isNotEmpty) {
+      await credential.updateDisplayName(nameController.text);
+    } else {
+      nameController.text = currentUser!.name;
+      await credential.updateDisplayName(currentUser!.name);
+    }
+
     await db.updateData(
       UserModel(
         id: currentUser!.id,

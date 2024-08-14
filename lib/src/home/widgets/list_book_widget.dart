@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:my_library/src/book_details/book_details.dart';
 import 'package:my_library/src/models/book_model.dart';
 import 'package:my_library/src/widgets/book_progress_indicator.dart';
+import 'package:one_context/one_context.dart';
 import 'package:provider/provider.dart';
 
 import '../home_store.dart';
@@ -21,7 +22,7 @@ class ListBookWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
       child: GestureDetector(
         onTap: () {
-          Navigator.of(context).push(MaterialPageRoute(builder: (_) {
+          OneContext().push(MaterialPageRoute(builder: (_) {
             return BookDetails(book: book);
           })).then((_) async {
             await store.initLibrary();

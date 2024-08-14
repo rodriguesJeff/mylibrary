@@ -34,26 +34,14 @@ class AuthService {
         credential.user!.uid,
       );
 
-      if (savedUser != null) {
-        await db.updateData(
-          UserModel(
-            id: credential.user!.uid,
-            name: credential.user!.displayName ?? "",
-            photo: credential.user!.photoURL ?? "",
-          ),
-          AppStrings.userTable,
-          credential.user!.uid,
-        );
-      } else {
-        await db.insertData(
-          UserModel(
-            id: credential.user!.uid,
-            name: credential.user!.displayName ?? "",
-            photo: credential.user!.photoURL ?? "",
-          ),
-          AppStrings.userTable,
-        );
-      }
+      await db.insertData(
+        UserModel(
+          id: credential.user!.uid,
+          name: credential.user!.displayName ?? "",
+          photo: credential.user!.photoURL ?? "",
+        ),
+        AppStrings.userTable,
+      );
 
       return CreationAccountStatus.created;
     } on FirebaseAuthException catch (e) {
@@ -85,17 +73,7 @@ class AuthService {
         credential.user!.uid,
       );
 
-      if (savedUser != null) {
-        await db.updateData(
-          UserModel(
-            id: credential.user!.uid,
-            name: credential.user!.displayName ?? "",
-            photo: credential.user!.photoURL ?? "",
-          ),
-          AppStrings.userTable,
-          credential.user!.uid,
-        );
-      } else {
+      if (savedUser == null) {
         await db.insertData(
           UserModel(
             id: credential.user!.uid,

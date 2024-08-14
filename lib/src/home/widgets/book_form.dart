@@ -3,8 +3,10 @@ import 'dart:io';
 import 'package:animated_button/animated_button.dart';
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:flutter/material.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:my_library/src/home/home_store.dart';
-import 'package:my_library/src/home/widgets/camera_screen.dart';
+import 'package:one_context/one_context.dart';
 import 'package:provider/provider.dart';
 
 import '../../models/status_model.dart';
@@ -24,13 +26,18 @@ class _BookFormState extends State<BookForm> {
     String startDate = '';
     String endDate = '';
 
+    final store = context.read<HomeStore>();
+
     return AlertDialog(
       title: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           const Text("Adicionar novo livro:"),
           IconButton(
-            onPressed: () => Navigator.pop(context),
+            onPressed: () {
+              store.clearForm();
+              OneContext().popDialog();
+            },
             icon: const Icon(
               Icons.close,
               color: Colors.black,
@@ -48,11 +55,7 @@ class _BookFormState extends State<BookForm> {
               children: [
                 GestureDetector(
                   onTap: () {
-                    showDialog(
-                        context: context,
-                        builder: (_) {
-                          return const CameraScreen();
-                        });
+                    photoDialog();
                   },
                   child: Container(
                     width: MediaQuery.sizeOf(context).width,
@@ -246,7 +249,7 @@ class _BookFormState extends State<BookForm> {
                     onPressed: () {
                       if (_formKey.currentState?.validate() ?? false) {
                         store.addNew();
-                        Navigator.of(context).pop();
+                        OneContext().pop();
                       }
                     },
                     child: const Text(
@@ -264,5 +267,94 @@ class _BookFormState extends State<BookForm> {
         ),
       ),
     );
+  }
+
+  Future<String?> takeSnapshot(ImageSource source) async {
+    final ImagePicker picker = ImagePicker();
+    final XFile? img = await picker.pickImage(
+      source: source,
+      maxWidth: 400,
+    );
+    if (img == null) return null;
+    final croppedImage = await cropImage(img.path);
+
+    return croppedImage;
+  }
+
+  void photoDialog() {
+    final homeStore = context.read<HomeStore>();
+    OneContext().showDialog(
+      builder: (_) {
+        return AlertDialog(
+          title: const Text("Escolha uma das opções:"),
+          content: SingleChildScrollView(
+            child: Column(
+              children: [
+                AnimatedButton(
+                  color: Colors.blue,
+                  onPressed: () async {
+                    final image = await takeSnapshot(
+                      ImageSource.camera,
+                    );
+                    if (image != null) {
+                      homeStore.changeBookCover(image);
+                    }
+
+                    OneContext().popDialog();
+                  },
+                  child: const Text(
+                    "CÂMERA",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 16),
+                AnimatedButton(
+                  color: Colors.green,
+                  onPressed: () async {
+                    final image = await takeSnapshot(
+                      ImageSource.gallery,
+                    );
+                    if (image != null) {
+                      homeStore.changeBookCover(image);
+                    }
+
+                    OneContext().popDialog();
+                  },
+                  child: const Text(
+                    "GALERIA",
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Future<String?> cropImage(String path) async {
+    CroppedFile? croppedFile = await ImageCropper().cropImage(
+      sourcePath: path,
+      uiSettings: [
+        AndroidUiSettings(
+          toolbarTitle: 'Edição',
+          toolbarColor: Theme.of(context).appBarTheme.backgroundColor,
+          toolbarWidgetColor: Colors.white,
+          aspectRatioPresets: [
+            CropAspectRatioPreset.original,
+            CropAspectRatioPreset.square,
+          ],
+        ),
+      ],
+    );
+
+    return croppedFile?.path;
   }
 }
