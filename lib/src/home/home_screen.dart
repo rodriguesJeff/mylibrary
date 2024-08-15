@@ -241,10 +241,10 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ),
                           if (store.filteredBoks.isEmpty &&
-                              store.selectedFilter == 0)
+                              store.selectedFilter == 0) ...[
                             for (final BookModel book in store.books)
                               ListBookWidget(book: book)
-                          else
+                          ] else
                             for (final BookModel book in store.filteredBoks)
                               ListBookWidget(book: book)
                         ],

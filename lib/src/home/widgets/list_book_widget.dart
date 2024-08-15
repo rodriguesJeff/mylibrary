@@ -86,6 +86,43 @@ class ListBookWidget extends StatelessWidget {
                       readPages: book.readPages,
                       totalPages: book.totalPages,
                     ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 8.0),
+                      child: Chip(
+                        backgroundColor: book.statusId
+                                .toLowerCase()
+                                .contains("concluído")
+                            ? Colors.green
+                            : book.statusId.toLowerCase().contains("cancelado")
+                                ? Colors.redAccent
+                                : book.statusId
+                                        .toLowerCase()
+                                        .contains("para ler")
+                                    ? Colors.orangeAccent
+                                    : book.statusId
+                                            .toLowerCase()
+                                            .contains("lendo")
+                                        ? Colors.blueAccent
+                                        : Colors.grey.shade400,
+                        label: Text(
+                          book.statusId.toLowerCase().contains("concluído")
+                              ? "Concluído"
+                              : book.statusId
+                                      .toLowerCase()
+                                      .contains("cancelado")
+                                  ? "Cancelado"
+                                  : book.statusId
+                                          .toLowerCase()
+                                          .contains("para ler")
+                                      ? "Para Ler"
+                                      : book.statusId
+                                              .toLowerCase()
+                                              .contains("lendo")
+                                          ? "Lendo"
+                                          : "Desconhecido",
+                        ),
+                      ),
+                    ),
                   ],
                 ),
               ),

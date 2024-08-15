@@ -194,19 +194,19 @@ class _BookFormState extends State<BookForm> {
                           ),
                           keyboardType: TextInputType.number,
                         ),
-                        items: store.status
-                            .map((StatusModel item) =>
-                                DropdownMenuItem<StatusModel>(
-                                  value: item,
-                                  child: Text(
-                                    item.description,
-                                    style: const TextStyle(
-                                      fontSize: 18,
-                                    ),
-                                  ),
-                                ))
-                            .toList(),
-                        value: store.selectedStatus,
+                        items: store.status.map((StatusModel item) {
+                          return DropdownMenuItem<StatusModel>(
+                            value: item,
+                            child: Text(
+                              item.description,
+                              style: const TextStyle(fontSize: 18),
+                            ),
+                          );
+                        }).toList(),
+                        value: store.selectedStatus != null &&
+                                store.status.contains(store.selectedStatus)
+                            ? store.selectedStatus
+                            : null, // Selecione o valor apenas se ele estiver na lista
                         onChanged: (StatusModel? value) {
                           store.changeStatus(value!);
                           store.statusIdController.text = value.description;
@@ -247,9 +247,9 @@ class _BookFormState extends State<BookForm> {
                     shadowDegree: ShadowDegree.dark,
                     width: MediaQuery.sizeOf(context).width * .6,
                     onPressed: () {
-                      if (_formKey.currentState?.validate() ?? false) {
+                      if (_formKey.currentState?.validate() == true) {
                         store.addNew();
-                        OneContext().pop();
+                        OneContext().popDialog();
                       }
                     },
                     child: const Text(

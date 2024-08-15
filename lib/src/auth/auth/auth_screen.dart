@@ -20,8 +20,8 @@ class _AuthScreenState extends State<AuthScreen> {
 
   bool isRegistering = false;
 
-  bool passwordVisible = false;
-  bool retypePasswordVisible = false;
+  bool passwordVisible = true;
+  bool retypePasswordVisible = true;
 
   final emailFocus = FocusNode();
   final passwordFocus = FocusNode();
@@ -108,7 +108,6 @@ class _AuthScreenState extends State<AuthScreen> {
                         const SizedBox(height: 20),
                         TextFormField(
                           focusNode: emailFocus,
-                          readOnly: store.loading,
                           controller: store.emailController,
                           validator: (v) {
                             if (v != null && v.isNotEmpty) {
@@ -145,7 +144,6 @@ class _AuthScreenState extends State<AuthScreen> {
                         TextFormField(
                           focusNode: passwordFocus,
                           obscureText: passwordVisible,
-                          readOnly: store.loading,
                           controller: store.passwordController,
                           validator: (v) {
                             if (v != null && v.isNotEmpty) {
@@ -193,7 +191,6 @@ class _AuthScreenState extends State<AuthScreen> {
                           TextFormField(
                             focusNode: retypePasswordFocus,
                             obscureText: retypePasswordVisible,
-                            readOnly: store.loading,
                             controller: store.retypePasswordController,
                             validator: (v) {
                               if (v != null && v.isNotEmpty && isRegistering) {
@@ -239,73 +236,84 @@ class _AuthScreenState extends State<AuthScreen> {
                           ),
                         ],
                         const SizedBox(height: 10),
-                        TextButton(
-                          onPressed: store.loading
-                              ? null
-                              : () {
-                                  OneContext.instance.showDialog(builder: (_) {
-                                    return CustomAlertDialog(
-                                      label: "Recuperar",
-                                      title: const Text("Recuperação de senha"),
-                                      content: Column(
-                                        children: [
-                                          const Text("Informe o seu email!"
-                                              "\nEnviaremos um link para "
-                                              "recuperação da senha!"),
-                                          const SizedBox(height: 15),
-                                          TextFormField(
-                                            focusNode: emailFocus,
-                                            readOnly: store.loading,
-                                            controller: store.emailController,
-                                            validator: (v) {
-                                              if (v != null && v.isNotEmpty) {
-                                                return null;
-                                              } else {
-                                                return "O campo de Login precisa ser preenchido";
-                                              }
-                                            },
-                                            decoration: InputDecoration(
-                                              labelText: "E-mail",
-                                              labelStyle: TextStyle(
-                                                color: Colors.grey.shade800,
-                                                fontSize: 16.0,
-                                              ),
-                                              border: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(16.0),
-                                              ),
-                                              disabledBorder:
-                                                  OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(16.0),
-                                              ),
-                                              enabledBorder: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(16.0),
-                                              ),
-                                              focusedBorder: OutlineInputBorder(
-                                                borderRadius:
-                                                    BorderRadius.circular(16.0),
-                                              ),
-                                              errorBorder: OutlineInputBorder(
-                                                borderSide: const BorderSide(
-                                                    color: Colors.red),
-                                                borderRadius:
-                                                    BorderRadius.circular(16.0),
+                        if (!isRegistering)
+                          TextButton(
+                            onPressed: store.loading
+                                ? null
+                                : () {
+                                    OneContext.instance.showDialog(
+                                        builder: (_) {
+                                      return CustomAlertDialog(
+                                        label: "Recuperar",
+                                        title:
+                                            const Text("Recuperação de senha"),
+                                        content: Column(
+                                          children: [
+                                            const Text("Informe o seu email!"
+                                                "\nEnviaremos um link para "
+                                                "recuperação da senha!"),
+                                            const SizedBox(height: 15),
+                                            TextFormField(
+                                              focusNode: emailFocus,
+                                              readOnly: store.loading,
+                                              controller: store.emailController,
+                                              validator: (v) {
+                                                if (v != null && v.isNotEmpty) {
+                                                  return null;
+                                                } else {
+                                                  return "O campo de Login precisa ser preenchido";
+                                                }
+                                              },
+                                              decoration: InputDecoration(
+                                                labelText: "E-mail",
+                                                labelStyle: TextStyle(
+                                                  color: Colors.grey.shade800,
+                                                  fontSize: 16.0,
+                                                ),
+                                                border: OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          16.0),
+                                                ),
+                                                disabledBorder:
+                                                    OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          16.0),
+                                                ),
+                                                enabledBorder:
+                                                    OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          16.0),
+                                                ),
+                                                focusedBorder:
+                                                    OutlineInputBorder(
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          16.0),
+                                                ),
+                                                errorBorder: OutlineInputBorder(
+                                                  borderSide: const BorderSide(
+                                                      color: Colors.red),
+                                                  borderRadius:
+                                                      BorderRadius.circular(
+                                                          16.0),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                        ],
-                                      ),
-                                    );
-                                  }).then((_) async {
-                                    if (store.emailController.text.isNotEmpty) {
-                                      await store.resetPassword();
-                                    }
-                                  });
-                                },
-                          child: const Text("Esqueci minha senha!"),
-                        ),
+                                          ],
+                                        ),
+                                      );
+                                    }).then((_) async {
+                                      if (store
+                                          .emailController.text.isNotEmpty) {
+                                        await store.resetPassword();
+                                      }
+                                    });
+                                  },
+                            child: const Text("Esqueci minha senha!"),
+                          ),
                         const SizedBox(height: 5),
                         AnimatedButton(
                           width: MediaQuery.sizeOf(context).width * .9,

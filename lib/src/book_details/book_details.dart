@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:animated_button/animated_button.dart';
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:my_library/src/book_details/widgets/book_content_widget.dart';
@@ -55,7 +56,7 @@ class _BookDetailsState extends State<BookDetails> {
                       children: [
                         IconButton(
                           onPressed: () {
-                            OneContext().popDialog();
+                            OneContext().pop();
                           },
                           icon: Icon(
                             Icons.arrow_back,
@@ -65,34 +66,44 @@ class _BookDetailsState extends State<BookDetails> {
                         ),
                         IconButton(
                           onPressed: () {
-                            showDialog(
-                                context: context,
-                                builder: (_) {
-                                  return AlertDialog(
-                                    title: Text("Deletar livro"),
-                                    content: Text(
-                                      "Tem certeza que deseja deletar o"
-                                      " livro ${widget.book.title}?\nTodo o "
-                                      "conteúdo relacionado a ele será perdido!",
+                            OneContext().showDialog(builder: (_) {
+                              return AlertDialog(
+                                title: const Text("Deletar livro?"),
+                                content: Text(
+                                  "Tem certeza que deseja deletar o"
+                                  " livro ${widget.book.title}?\nTodo o "
+                                  "conteúdo relacionado a ele será perdido!",
+                                ),
+                                actions: [
+                                  TextButton(
+                                    onPressed: () async {
+                                      await store.deleteBook(widget.book.id);
+                                      OneContext().popDialog();
+                                      OneContext().pop();
+                                    },
+                                    child: const Text(
+                                      "Sim, deletar!",
+                                      style: TextStyle(
+                                        color: Colors.red,
+                                        fontSize: 16,
+                                      ),
                                     ),
-                                    actions: [
-                                      TextButton(
-                                        onPressed: () async {
-                                          await store
-                                              .deleteBook(widget.book.id);
-                                          OneContext().pop();
-                                          OneContext().pop();
-                                        },
-                                        child: const Text("Sim, deletar!"),
+                                  ),
+                                  AnimatedButton(
+                                    width:
+                                        MediaQuery.sizeOf(context).width * .4,
+                                    onPressed: () => OneContext().popDialog(),
+                                    child: const Text(
+                                      "Cancelar",
+                                      style: TextStyle(
+                                        color: Colors.white,
+                                        fontSize: 18.0,
                                       ),
-                                      ElevatedButton(
-                                        onPressed: () =>
-                                            OneContext().popDialog(),
-                                        child: const Text("Cancelar"),
-                                      ),
-                                    ],
-                                  );
-                                });
+                                    ),
+                                  ),
+                                ],
+                              );
+                            });
                           },
                           icon: Icon(
                             Icons.delete,

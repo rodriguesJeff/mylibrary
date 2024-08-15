@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:my_library/src/book_details/widgets/edit_info_widget.dart';
+import 'package:one_context/one_context.dart';
 
 class BookContentWidget extends StatelessWidget {
   const BookContentWidget({
@@ -45,14 +46,12 @@ class BookContentWidget extends StatelessWidget {
                 ),
                 IconButton(
                   onPressed: () {
-                    showDialog(
-                        context: context,
-                        builder: (_) {
-                          return EditInfoWidget(
-                            info: title,
-                            controller: controller,
-                          );
-                        });
+                    OneContext().showDialog(builder: (_) {
+                      return EditInfoWidget(
+                        info: title,
+                        controller: controller,
+                      );
+                    });
                   },
                   icon: Icon(
                     Icons.edit,

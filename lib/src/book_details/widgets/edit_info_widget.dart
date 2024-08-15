@@ -47,19 +47,19 @@ class EditInfoWidget extends StatelessWidget {
                         ),
                         keyboardType: TextInputType.number,
                       ),
-                      items: store.status
-                          .map((StatusModel item) =>
-                              DropdownMenuItem<StatusModel>(
-                                value: item,
-                                child: Text(
-                                  item.description,
-                                  style: const TextStyle(
-                                    fontSize: 18,
-                                  ),
-                                ),
-                              ))
-                          .toList(),
-                      value: store.selectedStatus,
+                      items: store.status.map((StatusModel item) {
+                        return DropdownMenuItem<StatusModel>(
+                          value: item,
+                          child: Text(
+                            item.description,
+                            style: const TextStyle(fontSize: 18),
+                          ),
+                        );
+                      }).toList(),
+                      value: store.selectedStatus != null &&
+                              store.status.contains(store.selectedStatus)
+                          ? store.selectedStatus
+                          : null, // Selecione o valor apenas se ele estiver na lista
                       onChanged: (StatusModel? value) {
                         store.changeStatus(value!);
                         store.statusIdController.text = value.description;
@@ -144,7 +144,7 @@ class EditInfoWidget extends StatelessWidget {
       ),
       actions: [
         TextButton(
-          onPressed: OneContext().popDialog(),
+          onPressed: OneContext().popDialog,
           child: const Text(
             "Cancelar",
             style: TextStyle(
@@ -153,6 +153,7 @@ class EditInfoWidget extends StatelessWidget {
           ),
         ),
         AnimatedButton(
+          width: MediaQuery.sizeOf(context).width * .4,
           onPressed: () async {
             if (store.statusIdController.text
                 .toLowerCase()
@@ -161,9 +162,14 @@ class EditInfoWidget extends StatelessWidget {
               final date = DateTime.now();
               store.endDateController.text =
                   '${date.day}/${date.month}/${date.year}';
+            } else if (store.statusIdController.text
+                .toLowerCase()
+                .contains("para ler")) {
+              store.readPagesController.clear();
+              store.endDateController.clear();
             }
             await store.updateBookInfos();
-            OneContext().pop();
+            OneContext().popDialog();
           },
           child: const Text(
             "Salvar",

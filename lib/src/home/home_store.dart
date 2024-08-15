@@ -98,9 +98,9 @@ class HomeStore extends ChangeNotifier {
       startDate: startDateController.text.isNotEmpty
           ? startDateController.text
           : selectedBook!.startDate,
-      endDate: endDateController.text.isNotEmpty
+      endDate: statusIdController.text.toLowerCase().contains("concluído")
           ? endDateController.text
-          : selectedBook!.endDate,
+          : "",
       statusId: statusIdController.text.isNotEmpty
           ? statusIdController.text
           : selectedBook!.statusId,
@@ -108,7 +108,7 @@ class HomeStore extends ChangeNotifier {
       userId: selectedBook!.userId,
       readPages: readPagesController.text.isNotEmpty
           ? int.parse(readPagesController.text)
-          : selectedBook!.readPages,
+          : 0,
       totalPages: totalPagesController.text.isNotEmpty
           ? int.parse(totalPagesController.text)
           : selectedBook!.totalPages,
@@ -218,7 +218,8 @@ class HomeStore extends ChangeNotifier {
     bookCover = "";
   }
 
-  initBook() {
+  initBook() async {
+    await getStatus();
     if (selectedBook != null) {
       clearForm();
       titleController.text = selectedBook!.title;
