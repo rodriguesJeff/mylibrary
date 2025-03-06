@@ -53,6 +53,38 @@ class _BookFormState extends State<BookForm> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                TextFormField(
+                  controller: store.isbnController,
+                  decoration: const InputDecoration(labelText: "Código ISBN"),
+                  keyboardType: TextInputType.number,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return "Por favor, insira o código ISBN";
+                    }
+                    return null;
+                  },
+                ),
+                const SizedBox(height: 10),
+                // Botão para buscar dados do livro pelo ISBN
+                Center(
+                  child: AnimatedButton(
+                    color: Colors.blue,
+                    shadowDegree: ShadowDegree.dark,
+                    width: MediaQuery.sizeOf(context).width * .6,
+                    onPressed: () async {
+                      if (_formKey.currentState?.validate() == true) {
+                        await store.fetchBookByIsbn(store.isbnController.text);
+                      }
+                    },
+                    child: const Text(
+                      "Buscar Dados pelo ISBN",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ),
+                ),
                 GestureDetector(
                   onTap: () {
                     photoDialog();

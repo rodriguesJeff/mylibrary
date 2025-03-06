@@ -22,6 +22,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => HomeStore()),
       ],
       child: MaterialApp(
+        debugShowCheckedModeBanner: false,
         theme: readingAppTheme,
         builder: OneContext().builder,
         navigatorKey: OneContext().key,

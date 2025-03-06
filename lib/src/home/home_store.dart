@@ -1,14 +1,20 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:my_library/src/database_ops/db_operations.dart';
+import 'package:my_library/src/home/home_service.dart';
 import 'package:my_library/src/models/book_model.dart';
 import 'package:my_library/src/models/status_model.dart';
 import 'package:my_library/src/models/user_model.dart';
 import 'package:my_library/src/utils/app_strings.dart';
 import 'package:uuid/uuid.dart';
 
+import '../models/isbn_book_model.dart';
+
 class HomeStore extends ChangeNotifier {
   BookStatus bookStatus = BookStatus.loading;
+
+  final homeService = HomeService();
+
   List<BookModel> books = [];
   List<BookModel> filteredBoks = [];
   List<StatusModel> status = [];
@@ -205,6 +211,7 @@ class HomeStore extends ChangeNotifier {
   final userIdController = TextEditingController();
   final readPagesController = TextEditingController();
   final totalPagesController = TextEditingController();
+  final isbnController = TextEditingController();
 
   clearForm() {
     titleController.clear();
@@ -214,6 +221,7 @@ class HomeStore extends ChangeNotifier {
     statusIdController.clear();
     readPagesController.clear();
     totalPagesController.clear();
+    isbnController.clear();
 
     bookCover = "";
   }
@@ -232,6 +240,44 @@ class HomeStore extends ChangeNotifier {
       bookCover = selectedBook!.cover;
     }
     bookStatus = BookStatus.fetched;
+  }
+
+  Future<void> fetchBookByIsbn(String isbn) async {
+    try {
+      bookStatus = BookStatus.loading;
+      notifyListeners();
+
+      // Chama a função que você criou no service
+      final IsbnBookModel isbnBook = await homeService.getBookFromIsbnApi(isbn);
+
+      // Adiciona o livro retornado à lista de livros
+      // books.add(
+      //   BookModel(
+      //     id: isbn,
+      //     title: isbnBook.title,
+      //     author: isbnBook.authors.toString(),
+      //     startDate: '',
+      //     endDate: '',
+      //     statusId: '',
+      //     cover: '',
+      //     userId: userIdController.text,
+      //     readPages: 0,
+      //     totalPages: isbnBook.pageCount,
+      //   ),
+      // );
+      // totalPages += isbnBook.pageCount;
+
+      titleController.text = isbnBook.title;
+      authorController.text = isbnBook.authors.toString();
+      totalPagesController.text = isbnBook.pageCount.toString();
+
+      bookStatus = BookStatus.fetched;
+      notifyListeners();
+    } catch (e) {
+      bookStatus = BookStatus.error;
+      notifyListeners();
+      print('Erro ao buscar livro pelo ISBN: $e');
+    }
   }
 
   final nameController = TextEditingController();
