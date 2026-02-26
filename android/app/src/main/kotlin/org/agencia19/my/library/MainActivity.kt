@@ -1,4 +1,4 @@
-package org.agencia19.my.library
+package org.jvconsultoria.my.library
 
 import io.flutter.embedding.android.FlutterActivity
 
