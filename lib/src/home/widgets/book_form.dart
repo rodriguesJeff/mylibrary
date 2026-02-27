@@ -21,7 +21,7 @@ class BookForm extends StatefulWidget {
 class _BookFormState extends State<BookForm> {
   @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
+    final formKey = GlobalKey<FormState>();
 
     String startDate = '';
     String endDate = '';
@@ -46,7 +46,7 @@ class _BookFormState extends State<BookForm> {
         ],
       ),
       content: Form(
-        key: _formKey,
+        key: formKey,
         child: Consumer<HomeStore>(
           builder: (c, store, child) => SingleChildScrollView(
             child: Column(
@@ -72,7 +72,7 @@ class _BookFormState extends State<BookForm> {
                     shadowDegree: ShadowDegree.dark,
                     width: MediaQuery.sizeOf(context).width * .6,
                     onPressed: () async {
-                      if (_formKey.currentState?.validate() == true) {
+                      if (formKey.currentState?.validate() == true) {
                         await store.fetchBookByIsbn(store.isbnController.text);
                       }
                     },
@@ -279,7 +279,7 @@ class _BookFormState extends State<BookForm> {
                     shadowDegree: ShadowDegree.dark,
                     width: MediaQuery.sizeOf(context).width * .6,
                     onPressed: () {
-                      if (_formKey.currentState?.validate() == true) {
+                      if (formKey.currentState?.validate() == true) {
                         store.addNew();
                         OneContext().popDialog();
                       }

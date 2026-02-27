@@ -1,12 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:my_library/src/database_ops/db_operations.dart';
 import 'package:my_library/src/home/home_service.dart';
 import 'package:my_library/src/models/book_model.dart';
 import 'package:my_library/src/models/status_model.dart';
 import 'package:my_library/src/models/user_model.dart';
-import 'package:my_library/src/utils/app_strings.dart';
-import 'package:uuid/uuid.dart';
 
 import '../models/isbn_book_model.dart';
 
@@ -19,7 +17,6 @@ class HomeStore extends ChangeNotifier {
   List<BookModel> filteredBoks = [];
   List<StatusModel> status = [];
   BookModel? selectedBook;
-  final db = DataBaseOperations();
   StatusModel? selectedStatus;
   String? bookCover;
   int selectedFilter = 0;
@@ -29,6 +26,8 @@ class HomeStore extends ChangeNotifier {
   int totalPages = 0;
   int totalBooks = 0;
 
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
   Future<void> initLibrary() async {
     await getStatus();
     await getBooks();
@@ -37,8 +36,6 @@ class HomeStore extends ChangeNotifier {
   }
 
   Future<void> getCurrentUser() async {
-    final result = await db.getData(AppStrings.userTable);
-    currentUser = UserModel.fromJson(result.first);
     notifyListeners();
   }
 
@@ -51,49 +48,36 @@ class HomeStore extends ChangeNotifier {
       nameController.text = currentUser!.name;
       await credential.updateDisplayName(currentUser!.name);
     }
-
-    await db.updateData(
-      UserModel(
-        id: currentUser!.id,
-        name: nameController.text,
-        photo: photo ?? "",
-      ),
-      AppStrings.userTable,
-      currentUser!.id,
-    );
   }
 
   Future<void> getBooks() async {
     books.clear();
     totalPages = 0;
-    final result = await db.getData(AppStrings.bookTable);
-    if (result.isNotEmpty) {
-      for (final r in result) {
-        books.add(BookModel.fromJson(r));
-      }
-      for (final b in books) {
-        totalPages = totalPages += b.readPages;
-      }
-    }
 
     notifyListeners();
   }
 
   Future<void> getStatus() async {
     status.clear();
-    final result = await db.getData(AppStrings.statusTable);
-    if (result.isNotEmpty) {
-      for (final r in result) {
-        status.add(StatusModel.fromJson(r));
-      }
-    }
+
     notifyListeners();
   }
 
-  Future updateBookInfos() async {
+  DateTime _parseDate(String date) {
+    try {
+      return DateTime.parse(date);
+    } catch (e) {
+      return DateTime.now();
+    }
+  }
+
+  Future<void> updateBookInfos() async {
+    if (selectedBook == null) return;
+
     bookStatus = BookStatus.loading;
     notifyListeners();
-    final book = BookModel(
+
+    final updatedBook = BookModel(
       id: selectedBook!.id,
       title: titleController.text.isNotEmpty
           ? titleController.text
@@ -102,27 +86,27 @@ class HomeStore extends ChangeNotifier {
           ? authorController.text
           : selectedBook!.author,
       startDate: startDateController.text.isNotEmpty
-          ? startDateController.text
+          ? _parseDate(startDateController.text)
           : selectedBook!.startDate,
       endDate: statusIdController.text.toLowerCase().contains("concluído")
-          ? endDateController.text
-          : "",
+          ? _parseDate(endDateController.text)
+          : null,
       statusId: statusIdController.text.isNotEmpty
           ? statusIdController.text
           : selectedBook!.statusId,
-      cover: bookCover ?? "'assets/cover.jpeg'",
+      cover: bookCover ?? selectedBook!.cover,
       userId: selectedBook!.userId,
-      readPages: readPagesController.text.isNotEmpty
-          ? int.parse(readPagesController.text)
-          : 0,
-      totalPages: totalPagesController.text.isNotEmpty
-          ? int.parse(totalPagesController.text)
-          : selectedBook!.totalPages,
+      readPages: int.tryParse(readPagesController.text) ?? 0,
+      totalPages:
+          int.tryParse(totalPagesController.text) ?? selectedBook!.totalPages,
     );
-    await db.updateData(book, AppStrings.bookTable, selectedBook!.id);
-    final editted = await db.getOneData(AppStrings.bookTable, selectedBook!.id);
-    selectedBook = null;
-    selectedBook = BookModel.fromJson(editted!);
+
+    await _firestore
+        .collection('books')
+        .doc(selectedBook!.id)
+        .update(updatedBook.toJson());
+
+    selectedBook = updatedBook;
     initBook();
     bookStatus = BookStatus.fetched;
     notifyListeners();
@@ -177,30 +161,31 @@ class HomeStore extends ChangeNotifier {
   }
 
   Future<void> addNew() async {
-    final bookCrud = DataBaseOperations();
-    await bookCrud.insertData(
-      BookModel(
-        id: const Uuid().v4(),
+    try {
+      final user = FirebaseAuth.instance.currentUser;
+      if (user == null) return;
+
+      final book = BookModel(
+        id: "",
         title: titleController.text,
         author: authorController.text,
-        startDate: startDateController.text,
-        endDate: endDateController.text,
+        startDate: _parseDate(startDateController.text),
+        endDate: endDateController.text.isNotEmpty
+            ? _parseDate(endDateController.text)
+            : null,
         statusId: statusIdController.text,
-        cover: bookCover ?? "'assets/cover.jpeg'",
-        userId: userIdController.text,
-        readPages: int.parse(readPagesController.text),
+        cover: bookCover ?? "assets/cover.jpeg",
+        userId: user.uid,
+        readPages: int.tryParse(readPagesController.text) ?? 0,
         totalPages: int.tryParse(totalPagesController.text) ?? 0,
-      ),
-      AppStrings.bookTable,
-    );
-    await getBooks();
-    clearForm();
-  }
+      );
 
-  Future deleteBook(String id) async {
-    final bookCrud = DataBaseOperations();
-    await bookCrud.deleteBook(id, AppStrings.bookTable);
-    notifyListeners();
+      await _firestore.collection('books').add(book.toJson());
+      await getBooks();
+      clearForm();
+    } catch (e) {
+      print("Erro ao adicionar: $e");
+    }
   }
 
   final titleController = TextEditingController();
@@ -235,11 +220,18 @@ class HomeStore extends ChangeNotifier {
       statusIdController.text = selectedBook!.statusId;
       totalPagesController.text = selectedBook!.totalPages.toString();
       readPagesController.text = selectedBook!.readPages.toString();
-      startDateController.text = selectedBook!.startDate;
-      endDateController.text = selectedBook!.endDate;
+
+      startDateController.text =
+          selectedBook!.startDate.toIso8601String().split('T')[0];
+
+      endDateController.text = selectedBook!.endDate != null
+          ? selectedBook!.endDate!.toIso8601String().split('T')[0]
+          : "";
+
       bookCover = selectedBook!.cover;
     }
     bookStatus = BookStatus.fetched;
+    notifyListeners();
   }
 
   Future<void> fetchBookByIsbn(String isbn) async {
@@ -247,25 +239,7 @@ class HomeStore extends ChangeNotifier {
       bookStatus = BookStatus.loading;
       notifyListeners();
 
-      // Chama a função que você criou no service
       final IsbnBookModel isbnBook = await homeService.getBookFromIsbnApi(isbn);
-
-      // Adiciona o livro retornado à lista de livros
-      // books.add(
-      //   BookModel(
-      //     id: isbn,
-      //     title: isbnBook.title,
-      //     author: isbnBook.authors.toString(),
-      //     startDate: '',
-      //     endDate: '',
-      //     statusId: '',
-      //     cover: '',
-      //     userId: userIdController.text,
-      //     readPages: 0,
-      //     totalPages: isbnBook.pageCount,
-      //   ),
-      // );
-      // totalPages += isbnBook.pageCount;
 
       titleController.text = isbnBook.title;
       authorController.text = isbnBook.authors.toString();

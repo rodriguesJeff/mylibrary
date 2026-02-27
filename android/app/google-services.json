@@ -2,25 +2,17 @@
   "project_info": {
     "project_number": "1070401648629",
     "project_id": "mylibrary-b7f0b",
-    "storage_bucket": "mylibrary-b7f0b.appspot.com"
+    "storage_bucket": "mylibrary-b7f0b.firebasestorage.app"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1070401648629:android:7425e421c72e91158252bc",
+        "mobilesdk_app_id": "1:1070401648629:android:22fa6d86e1f95e438252bc",
         "android_client_info": {
           "package_name": "org.jvconsultoria.my.library"
         }
       },
       "oauth_client": [
-        {
-          "client_id": "1070401648629-5o3e3alqq8gnpjhrah7m55t4jrdqfvtm.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "org.jvconsultoria.my.library",
-            "certificate_hash": "abce83b55ce71b695386d415618e16dff4182ca7"
-          }
-        },
         {
           "client_id": "1070401648629-29rj6hbt2pgta0esfu7ga0vqq0f6tbar.apps.googleusercontent.com",
           "client_type": 3

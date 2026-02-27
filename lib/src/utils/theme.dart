@@ -23,7 +23,7 @@ final ThemeData readingAppTheme = ThemeData(
     textTheme: ButtonTextTheme.primary,
   ),
   appBarTheme: const AppBarTheme(
-    color: Color(0xFF0057A3),
+    backgroundColor: Color(0xFF0057A3),
     iconTheme: IconThemeData(color: Colors.white),
     titleTextStyle: TextStyle(
       color: Colors.white,
@@ -42,10 +42,10 @@ final ThemeData readingAppTheme = ThemeData(
       borderSide: BorderSide(color: Color(0xFF0057A3)),
     ),
   ),
-  dialogTheme: DialogTheme(
-    backgroundColor: const Color(0xFFF5F5F5),
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(10.0),
-    ),
-  ),
+  // dialogTheme: DialogTheme(
+  //   backgroundColor: const Color(0xFFF5F5F5),
+  //   shape: RoundedRectangleBorder(
+  //     borderRadius: BorderRadius.circular(10.0),
+  //   ),
+  // ),
 );

@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../../models/status_model.dart';
 
+// ignore: must_be_immutable
 class EditInfoWidget extends StatelessWidget {
   EditInfoWidget({
     super.key,

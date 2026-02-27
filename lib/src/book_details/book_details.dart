@@ -77,7 +77,6 @@ class _BookDetailsState extends State<BookDetails> {
                                 actions: [
                                   TextButton(
                                     onPressed: () async {
-                                      await store.deleteBook(widget.book.id);
                                       OneContext().popDialog();
                                       OneContext().pop();
                                     },
@@ -187,13 +186,18 @@ class _BookDetailsState extends State<BookDetails> {
                 const SizedBox(height: 12.0),
                 BookContentWidget(
                   title: "Data de início",
-                  content: store.selectedBook!.startDate,
+                  content: store.selectedBook!.startDate
+                      .toIso8601String()
+                      .split('T')[0],
                   controller: store.startDateController,
                 ),
                 const SizedBox(height: 12.0),
                 BookContentWidget(
                   title: "Data de fim",
-                  content: store.selectedBook!.endDate,
+                  content: store.selectedBook!.endDate
+                          ?.toIso8601String()
+                          .split('T')[0] ??
+                      "Leitura em progresso",
                   controller: store.endDateController,
                 ),
                 const SizedBox(height: 15.0),
